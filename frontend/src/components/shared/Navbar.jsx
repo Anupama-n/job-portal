@@ -12,6 +12,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut, Settings, User2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
     const user = false;
@@ -41,8 +42,9 @@ const Navbar = () => {
 
               {!user ? (
                 <div className="space-x-4">
-                  <Button variant="outline" className="ml-6">Login</Button>
-                  <Button className="bg-[#9B59B6] hover:bg-[#7A3C8E]">Signup</Button>
+                  <Link to="/login"><Button variant="outline" className="ml-6">Login</Button></Link>
+                  <Link to="/signup"><Button className="bg-[#9B59B6] hover:bg-[#7A3C8E]">Signup</Button></Link>
+                  
                 </div>
               ) : (
                 <>
