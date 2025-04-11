@@ -46,6 +46,15 @@ const Signup = () => {
                             className="mt-1 px-4 py-2 border rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9B59B6] focus:border-[#9B59B6]"
                         />
                     </div>
+                    <div className="mb-6">
+                        <Label className="block text-sm font-medium text-gray-700">Password</Label>
+                        <Input
+                            type="password"
+                            placeholder="**********"
+                            className="mt-1 px-4 py-2 border rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9B59B6] focus:border-[#9B59B6]"
+                        />
+                    </div>
+
 
                     <div className="mb-6">
                         <Label className="block text-sm font-medium text-gray-700">Phone Number</Label>
