@@ -2,14 +2,23 @@ import React, { useState } from 'react';
 import Navbar from '../shared/Navbar';
 import { Label } from "@/components/ui/label";
 import { Input } from '../ui/input';
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Link } from 'react-router-dom';
 
 const Login = () => {
-    const [selectedOption, setSelectedOption] = useState("student");
+    const [input, setInput] = useState({
+        email: "",
+        password: "",
+        role: "student"
+    });
 
-    const handleRadioChange = (value) => {
-        setSelectedOption(value);
+    const changeEventHandler = (e) => {
+        setInput({ ...input, [e.target.name]: e.target.value });
+    };
+
+    const submitHandler = async (e) => {
+        e.preventDefault();
+        console.log(input);
+        // TODO: Add API call or authentication logic here
     };
 
     return (
@@ -17,13 +26,16 @@ const Login = () => {
             <Navbar />
 
             <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
-                <form>
+                <form onSubmit={submitHandler}>
                     <h1 className="font-bold text-xl text-center text-[#9B59B6] mb-5">Login</h1>
 
                     <div className="mb-6">
                         <Label className="block text-sm font-medium text-gray-700">Email</Label>
                         <Input
                             type="email"
+                            name="email"
+                            value={input.email}
+                            onChange={changeEventHandler}
                             placeholder="aarikathapa82@gmail.com"
                             className="mt-1 px-4 py-2 border rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9B59B6] focus:border-[#9B59B6]"
                         />
@@ -33,34 +45,43 @@ const Login = () => {
                         <Label className="block text-sm font-medium text-gray-700">Password</Label>
                         <Input
                             type="password"
+                            name="password"
+                            value={input.password}
+                            onChange={changeEventHandler}
                             placeholder="********"
                             className="mt-1 px-4 py-2 border rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9B59B6] focus:border-[#9B59B6]"
                         />
                     </div>
 
-                    <div>
+                    <div className="mb-6">
                         <Label className="block text-sm font-medium text-gray-700 mb-3">User Type</Label>
-                        <RadioGroup value={selectedOption} onValueChange={handleRadioChange}>
-                            <div className="flex items-center space-x-6">
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem
-                                        value="student"
-                                        name="role"
-                                        className="h-4 w-4 border-gray-300 text-[#9B59B6] focus:ring-[#9B59B6] rounded-full cursor-pointer transition-all duration-200"
-                                    />
-                                    <Label className="text-sm text-gray-700 cursor-pointer">Student</Label>
-                                </div>
-
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem
-                                        value="recruiter"
-                                        name="role"
-                                        className="h-4 w-4 border-gray-300 text-[#9B59B6] focus:ring-[#9B59B6] rounded-full cursor-pointer transition-all duration-200"
-                                    />
-                                    <Label className="text-sm text-gray-700 cursor-pointer">Recruiter</Label>
-                                </div>
+                        <div className="flex items-center space-x-6">
+                            <div className="flex items-center space-x-2">
+                                <input
+                                    type="radio"
+                                    id="student"
+                                    value="student"
+                                    name="role"
+                                    checked={input.role === "student"}
+                                    onChange={changeEventHandler}
+                                    className="h-4 w-4 border-gray-300 text-[#9B59B6] focus:ring-[#9B59B6] rounded-full cursor-pointer transition-all duration-200"
+                                />
+                                <Label htmlFor="student" className="text-sm text-gray-700 cursor-pointer">Student</Label>
                             </div>
-                        </RadioGroup>
+
+                            <div className="flex items-center space-x-2">
+                                <input
+                                    type="radio"
+                                    id="recruiter"
+                                    value="recruiter"
+                                    name="role"
+                                    checked={input.role === "recruiter"}
+                                    onChange={changeEventHandler}
+                                    className="h-4 w-4 border-gray-300 text-[#9B59B6] focus:ring-[#9B59B6] rounded-full cursor-pointer transition-all duration-200"
+                                />
+                                <Label htmlFor="recruiter" className="text-sm text-gray-700 cursor-pointer">Recruiter</Label>
+                            </div>
+                        </div>
                     </div>
 
                     <div className="flex justify-end mb-4">
