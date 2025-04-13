@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from './shared/Navbar';
 import { Avatar, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
@@ -6,19 +6,23 @@ import { Contact, Mail, Pen, FileText } from 'lucide-react';
 import { Badge } from './ui/badge';
 import { Link } from 'react-router-dom';
 import AppliedJobTable from './AppliedJobTable';
+import UpdateProfileDialog from './UpdateProfileDialog';
 
 const skills = ['HTML', 'CSS', 'JavaScript', 'ReactJs', 'Java'];
+const isResume = true;
 
 const Profile = () => {
-
-    const isResume = true;
+    const [open, setOpen] = useState(false);
+    
     return (
         <div className="min-h-screen bg-gray-50">
             <Navbar />
             <div className="max-w-4xl mx-auto mt-10 px-4">
                 <div className="relative bg-white border border-gray-200 rounded-2xl shadow-md p-8 flex flex-col space-y-8">
 
-                    <Button
+            
+                    <Button 
+                        onClick={() => setOpen(true)}  
                         size="icon"
                         variant="outline"
                         className="absolute top-4 right-4"
@@ -50,6 +54,8 @@ const Profile = () => {
                             </div>
                         </div>
                     </div>
+
+                
                     <div>
                         <h2 className="text-lg font-medium text-gray-700 mb-2">Skills</h2>
                         {skills && skills.length > 0 ? (
@@ -67,7 +73,6 @@ const Profile = () => {
                             <p className="text-gray-400 text-sm">No skills added yet.</p>
                         )}
                     </div>
-
                     <div>
                         <h2 className="text-lg font-medium text-gray-700 mb-2">Resume</h2>
                         <div className="flex items-center space-x-3 text-sm text-gray-600">
@@ -76,21 +81,21 @@ const Profile = () => {
                                 isResume ? <a target="blank" href="https://github.com/Anupama-n">Anupama</a> : <span>N/A</span>
                             }
                             <Button variant="outline" size="sm">
-                                <Link to="https://github.com/Anupama-n"> View</Link>
+                                <Link to="https://github.com/Anupama-n" target="_blank"> View</Link>
                             </Button>
                         </div>
                     </div>
-
-
                 </div>
+
+    
                 <div className="max-w-4xl mx-auto my-10 px-4">
                     <h1 className="text-2xl font-semibold text-gray-800 mb-6">Applied Jobs</h1>
-                    
-                        <AppliedJobTable />
-                    
+                    <AppliedJobTable />
                 </div>
-
             </div>
+
+        
+            <UpdateProfileDialog open={open} setOpen={setOpen} />
         </div>
     );
 };
