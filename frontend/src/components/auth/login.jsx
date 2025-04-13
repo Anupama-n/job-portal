@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import Navbar from '../shared/Navbar';
 import { Label } from "@/components/ui/label";
 import { Input } from '../ui/input';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { USER_API_END_POINT } from '@/utils/constant';
+import axios from "axios";
+import { toast } from 'sonner';
+
 
 const Login = () => {
     const [input, setInput] = useState({
@@ -10,6 +14,7 @@ const Login = () => {
         password: "",
         role: "student"
     });
+    const navigate = useNavigate ();
 
     const changeEventHandler = (e) => {
         setInput({ ...input, [e.target.name]: e.target.value });
@@ -17,9 +22,33 @@ const Login = () => {
 
     const submitHandler = async (e) => {
         e.preventDefault();
-        console.log(input);
-        // TODO: Add API call or authentication logic here
-    };
+        
+        const formData = new FormData();
+                
+                formData.append("email", input.email);
+                
+                formData.append("password", input.password);
+                formData.append("role", input.role);
+                
+                try {
+                    const res = await axios.post(`${USER_API_END_POINT}/login`, input,{
+                        headers:{
+                            "Content-Type": "application/json"
+                        },
+                        withCredentials: true,
+                    });
+                    if (res.data.success){
+                        navigate("/")
+                        toast.success(res.data.message);
+                    }
+                } catch (error) {
+                    console.error("Signup error:", error);
+                    const errorMessage = error.response?.data?.message || "Something went wrong. Please try again.";
+                    toast.error(errorMessage);
+                }
+        
+            }
+    
 
     return (
         <div>
