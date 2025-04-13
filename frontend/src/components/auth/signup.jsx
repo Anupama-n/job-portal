@@ -6,6 +6,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { USER_API_END_POINT } from '@/utils/constant';
 import axios from "axios";
 import { toast } from 'sonner';
+import { useDispatch, useSelector } from 'react-redux';
+import store from '@/redux/store';
+import { setLoading } from '@/redux/authSlice';
 
 const Signup = () => {
     const [input, setInput] = useState({
@@ -16,7 +19,8 @@ const Signup = () => {
         role: "",
         file: ""
     });
-
+    const {loading} = useSelector(store=>store.auth);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const changeEventHandler = (e) => {
@@ -42,6 +46,7 @@ const Signup = () => {
         }
 
         try {
+            dispatch(setLoading(true));
             const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data"
@@ -57,6 +62,8 @@ const Signup = () => {
             console.error("Signup error:", error);
             const errorMessage = error.response?.data?.message || "Something went wrong. Please try again.";
             toast.error(errorMessage);
+        }finally{
+            dispatch(setLoading(false));
         }
     };
 
@@ -155,14 +162,19 @@ const Signup = () => {
                         />
                     </div>
 
-                    <div className="flex justify-center">
+                    {
+                        loading ? <button className='m-full my-4'> <Loader2 className='ms-2 h-4 w-4 animate-spin'/>Please Wait</button>:
+                        <div className="flex justify-center">
                         <button
                             type="submit"
                             className="w-full py-2 px-4 bg-[#9B59B6] text-white font-semibold rounded-md shadow-md hover:bg-[#7A3C8E] focus:outline-none focus:ring-2 focus:ring-[#9B59B6] mb-4"
                         >
-                            Sign Up
+                            Signup
                         </button>
                     </div>
+
+                    }
+
 
                     <div className="flex justify-center">
                         <span>

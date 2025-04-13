@@ -6,6 +6,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { USER_API_END_POINT } from '@/utils/constant';
 import axios from "axios";
 import { toast } from 'sonner';
+import { useDispatch, useSelector } from 'react-redux';
+import { setLoading } from '@/redux/authSlice';
+import store from '@/redux/store';
+import { Loader, Loader2 } from 'lucide-react';
 
 
 const Login = () => {
@@ -14,41 +18,39 @@ const Login = () => {
         password: "",
         role: "student"
     });
-    const navigate = useNavigate ();
-
+    const {loading} = useSelector(store=>store.auth)
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
     const changeEventHandler = (e) => {
         setInput({ ...input, [e.target.name]: e.target.value });
     };
 
     const submitHandler = async (e) => {
         e.preventDefault();
-        
-        const formData = new FormData();
-                
-                formData.append("email", input.email);
-                
-                formData.append("password", input.password);
-                formData.append("role", input.role);
-                
-                try {
-                    const res = await axios.post(`${USER_API_END_POINT}/login`, input,{
-                        headers:{
-                            "Content-Type": "application/json"
-                        },
-                        withCredentials: true,
-                    });
-                    if (res.data.success){
-                        navigate("/")
-                        toast.success(res.data.message);
-                    }
-                } catch (error) {
-                    console.error("Signup error:", error);
-                    const errorMessage = error.response?.data?.message || "Something went wrong. Please try again.";
-                    toast.error(errorMessage);
-                }
-        
+
+        dispatch(setLoading(true));
+        try {
+            const res = await axios.post(`${USER_API_END_POINT}/login`, input, {
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                withCredentials: true,
+            });
+            if (res.data.success) {
+                navigate("/")
+                toast.success(res.data.message);
             }
-    
+        } catch (error) {
+            console.error("Signup error:", error);
+            const errorMessage = error.response?.data?.message || "Something went wrong. Please try again.";
+            toast.error(errorMessage);
+        } 
+        finally{
+            dispatch(setLoading(false));
+        }
+
+    }
+
 
     return (
         <div>
@@ -116,8 +118,9 @@ const Login = () => {
                     <div className="flex justify-end mb-4">
                         <Link to="/forgot-password" className="text-sm text-[#9B59B6] hover:underline">Forgot Password?</Link>
                     </div>
-
-                    <div className="flex justify-center">
+                    {
+                        loading ? <button className='m-full my-4'> <Loader2 className='ms-2 h-4 w-4 animate-spin'/>Please Wait</button>:
+                        <div className="flex justify-center">
                         <button
                             type="submit"
                             className="w-full py-2 px-4 bg-[#9B59B6] text-white font-semibold rounded-md shadow-md hover:bg-[#7A3C8E] focus:outline-none focus:ring-2 focus:ring-[#9B59B6] mb-4"
@@ -125,6 +128,10 @@ const Login = () => {
                             Login
                         </button>
                     </div>
+
+                    }
+
+                
 
                     <div className="flex justify-center">
                         <span>

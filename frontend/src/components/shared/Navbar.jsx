@@ -23,7 +23,7 @@ const Navbar = () => {
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <h1 className="text-3xl font-bold text-gray-800">
-              Job <span className="text-[#9B59B6]">Portal</span>
+            Job <span className="text-[#9B59B6]">Orbit</span>
             </h1>
 
             <div className="flex items-center space-x-7">
