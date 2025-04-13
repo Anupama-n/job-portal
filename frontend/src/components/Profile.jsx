@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 import { Contact, Mail, Pen, FileText } from 'lucide-react';
 import { Badge } from './ui/badge';
 import { Link } from 'react-router-dom';
+import AppliedJobTable from './AppliedJobTable';
 
 const skills = ['HTML', 'CSS', 'JavaScript', 'ReactJs', 'Java'];
 
@@ -75,16 +76,20 @@ const Profile = () => {
                                 isResume ? <a target="blank" href="https://github.com/Anupama-n">Anupama</a> : <span>N/A</span>
                             }
                             <Button variant="outline" size="sm">
-                               <Link to = "https://github.com/Anupama-n"> View</Link>
+                                <Link to="https://github.com/Anupama-n"> View</Link>
                             </Button>
                         </div>
                     </div>
-                    <div className='max-w-4xl mx-auto'>
-                        <h1>Applied Jobs</h1>
-                        
-                    </div>
+
 
                 </div>
+                <div className="max-w-4xl mx-auto my-10 px-4">
+                    <h1 className="text-2xl font-semibold text-gray-800 mb-6">Applied Jobs</h1>
+                    
+                        <AppliedJobTable />
+                    
+                </div>
+
             </div>
         </div>
     );
