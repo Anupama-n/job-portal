@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogFooter, DialogHeader } from './ui/dialog';
 import { DialogTitle } from '@radix-ui/react-dialog';
-import { Input } from './ui/input'; 
-import { Button } from './ui/button'; 
-import { useSelector } from 'react-redux';
-import { Loader2 } from 'lucide-react'; 
-
+import { Input } from './ui/input';
+import { Button } from './ui/button';
+import { useDispatch, useSelector } from 'react-redux';
+import { Loader2 } from 'lucide-react';
+import { USER_API_END_POINT } from '@/utils/constant';
+import { setUser } from '@/redux/authSlice';
+import { toast } from 'sonner';
+import axios from 'axios';
 const UpdateProfileDialog = ({ open, setOpen }) => {
-    const [loading, setLoading] = useState(false);  
+    const [loading, setLoading] = useState(false);
     const { user } = useSelector(store => store.auth);
-    
+
     const [input, setInput] = useState({
         fullname: '',
         email: '',
@@ -18,8 +21,9 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         skills: '',
         file: null
     });
+    const dispatch = useDispatch();
 
-    
+
     useEffect(() => {
         if (open && user) {
             setInput({
@@ -27,11 +31,12 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                 email: user?.email || '',
                 phoneNumber: user?.phoneNumber || '',
                 bio: user?.profile?.bio || '',
-                skills: user?.profile?.skills?.join(', ') || '', 
-                file: null 
+                skills: user?.profile?.skills?.join(', ') || '',
+                file: null
             });
         }
     }, [open, user]);
+
 
     const changeEventHandler = (e) => {
         const { name, value } = e.target;
@@ -42,17 +47,43 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         setInput(prevState => ({ ...prevState, file: e.target.files[0] }));
     };
 
-    const submitHandler = (e) => {
+
+    const submitHandler = async (e) => {
         e.preventDefault();
         setLoading(true);
 
-        
-        setTimeout(() => {
-            console.log(input);
+        try {
+            const formData = new FormData();
+            formData.append('fullname', input.fullname);
+            formData.append('email', input.email);
+            formData.append('phoneNumber', input.phoneNumber);
+            formData.append('bio', input.bio);
+            formData.append('skills', JSON.stringify(input.skills.split(',').map(skill => skill.trim())));
+
+            if (input.file) {
+                formData.append('file', input.file);
+            }
+
+            const res = await axios.post(`${USER_API_END_POINT}/profile/update`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+                withCredentials: true
+            });
+            if(res.data.success){
+                dispatch(setUser(res.data.user))
+                toast.success(res.data.message)
+            }
+
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            toast.error(error.response.data.message)
+        } finally {
             setLoading(false);
-            setOpen(false); 
-        }, 2000); 
+        }
+        setOpen(false)
     };
+
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
