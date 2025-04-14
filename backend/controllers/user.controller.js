@@ -2,6 +2,8 @@
 import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import cloudinary from "../utils/cloudinary.js";
+import getDataUri from "../utils/datauri.js";
 
 export const register = async (req , res) => {
     try{
@@ -43,6 +45,8 @@ export const register = async (req , res) => {
 export const login = async (req, res) => {
     try {
         const {email, password, role} = req.body;
+    
+        
 
     
         if (!email || !password || !role) {
@@ -60,7 +64,7 @@ export const login = async (req, res) => {
                 success: false
             });
         }
-        console.log(user); // Debugging - Check the user object
+
         const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordMatch) {
             return res.status(400).json({
@@ -78,7 +82,6 @@ export const login = async (req, res) => {
         const tokenData = { userId: user._id };
         const token = await jwt.sign(tokenData, process.env.SECRET_KEY, { expiresIn: '1d' });
 
-        // Create a user object to return
         user = {
             _id: user._id,
             fullname: user.fullname,
@@ -88,7 +91,6 @@ export const login = async (req, res) => {
             profile: user.profile
         };
 
-        // Send the response with a token cookie
         return res.status(200).cookie("token", token, {
             maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day
             httpOnly: true,
@@ -119,19 +121,14 @@ export const logout = async(req, res) => {
         
     }
 }
-export const updateProfile = async(req, res) => {
+export const updateProfile = async (req, res) => {
     try {
         const { fullname, email, phoneNumber, bio, skills } = req.body;
-        const file = req.file; 
+        const file = req.file;
 
-        let skillsArray;
-        if (skills) {
-            skillsArray = skills.split(",");
-        }
-
-        const userId = req.id; 
+        const userId = req.id;
         let user = await User.findById(userId);
-        
+
         if (!user) {
             return res.status(400).json({
                 message: "User not found",
@@ -139,14 +136,37 @@ export const updateProfile = async(req, res) => {
             });
         }
 
-    
         if (fullname) user.fullname = fullname;
         if (email) user.email = email;
         if (phoneNumber) user.phoneNumber = phoneNumber;
         if (bio) user.profile.bio = bio;
-        if (skills) user.profile.skills = skillsArray;
 
-        // cloudinary logic here to upload and store the file
+        if (skills) {
+            let parsedSkills = skills;
+            if (typeof skills === 'string') {
+                try {
+                    parsedSkills = JSON.parse(skills);
+                } catch (e) {
+                    parsedSkills = skills.split(',').map(skill => skill.trim());
+                }
+            }
+            user.profile.skills = parsedSkills;
+        }
+
+        // ✅ Resume Upload to Cloudinary
+        if (file) {
+            const fileUri = getDataUri(file);
+            const cloudResponse = await cloudinary.uploader.upload(fileUri.content, {
+                resource_type: "raw",
+                folder: "resumes",
+                type: "upload"
+            });
+
+            if (cloudResponse) {
+                user.profile.resume = cloudResponse.secure_url;
+                user.profile.resumeOriginalName = file.originalname;
+            }
+        }
 
         await user.save();
 
@@ -164,7 +184,6 @@ export const updateProfile = async(req, res) => {
             user,
             success: true
         });
-        
     } catch (error) {
         console.log(error);
         return res.status(500).json({
