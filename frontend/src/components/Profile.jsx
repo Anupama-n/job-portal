@@ -35,7 +35,11 @@ const Profile = () => {
 
                     <div className="flex flex-col sm:flex-row sm:items-center space-y-6 sm:space-y-0 sm:space-x-6">
                         <Avatar className="h-24 w-24 ring-2 ring-[#9B59B6]">
-                            <AvatarImage src="https://static.thenounproject.com/png/363640-200.png" />
+                            <AvatarImage
+                                src={user?.profile?.profilePhoto || "https://static.thenounproject.com/png/363640-200.png"}
+                                alt="User profile"
+                            />
+
                         </Avatar>
 
                         <div className="flex flex-col space-y-3">

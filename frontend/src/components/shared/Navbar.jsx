@@ -76,7 +76,7 @@ const Navbar = () => {
                   <DropdownMenuTrigger asChild>
                     <Avatar className="cursor-pointer ml-6">
                       <AvatarImage
-                        src="https://github.com/shadcn.png"
+                        src={user?.profile?.profilePhoto}
                         alt="@user"
                       />
                       <AvatarFallback>U</AvatarFallback>
