@@ -153,7 +153,6 @@ export const updateProfile = async (req, res) => {
             user.profile.skills = parsedSkills;
         }
 
-        // ✅ Resume Upload to Cloudinary
         if (file) {
             const fileUri = getDataUri(file);
             const cloudResponse = await cloudinary.uploader.upload(fileUri.content, {
