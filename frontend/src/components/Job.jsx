@@ -21,6 +21,7 @@ const Job = ({ job }) => {
     month: 'long',
     day: 'numeric',
   });
+ 
   
   return (
 
