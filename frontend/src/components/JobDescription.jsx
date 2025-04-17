@@ -1,115 +1,150 @@
-import React from 'react';
+import React, { useEffect, useState, useMemo  } from 'react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { useParams } from 'react-router-dom';
-import { useEffect } from 'react';
-import { JOB_API_END_POINT } from '@/utils/constant';
-import axios
- from 'axios';
-import { setSingleJob } from '@/redux/jobSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+import { APPLICATION_API_END_POINT, JOB_API_END_POINT } from '@/utils/constant';
+import { setSingleJob } from '@/redux/jobSlice';
+import { toast } from 'sonner';
+
 
 const JobDescription = () => {
-    const isApplied = false;
+    
+
+
     const params = useParams();
     const jobId = params.id;
-    const {singleJob} = useSelector(store => store.job);
-    const {user} = useSelector(store => store.auth);
     const dispatch = useDispatch();
-    const postedDate = new Date(singleJob.createdAt).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+    const [loading, setLoading] = useState(false);
+
+    const { singleJob } = useSelector(store => store.job);
+    const { user } = useSelector(store => store.auth);
+    const isApplied = useMemo(() => {
+      return singleJob?.applications?.some(application => application.applicant === user?._id) || false;
+  }, [singleJob, user?._id]);
+
+
+
+    const postedDate = new Date(singleJob?.createdAt).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
     });
 
-
     useEffect(() => {
-      const fetchSingleJobs = async () => {
-          try {
-              const res = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`, {withCredentials:true});
-              
-              console.log("Job response: ", res.data);
-              if(res.data.success){
-                  dispatch(setSingleJob(res.data.job));
+        const fetchSingleJobs = async () => {
+            try {
+                const res = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`, { withCredentials: true });
+                if (res.data.success) {
+                    dispatch(setSingleJob(res.data.job));
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchSingleJobs();
+    }, [jobId, dispatch, user?._id]);
+
+    const applyJobHandler = async () => {
+      setLoading(true);
+      try {
+          const res = await axios.get(`${APPLICATION_API_END_POINT}/apply/${jobId}`, { withCredentials: true });
+          if (res.data.success) {
+              toast.success(res.data.message);
+  
+              const jobRes = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`, { withCredentials: true });
+              if (jobRes.data.success) {
+                  dispatch(setSingleJob(jobRes.data.job));
               }
-          } catch (error) {
-              console.log(error);
-              
           }
+      } catch (error) {
+          console.error(error);
+          toast.error(error?.response?.data?.message || "Something went wrong");
+      } finally {
+          setLoading(false);
       }
-      fetchSingleJobs();
-  },[jobId, dispatch,user?._id ])
+  };
+  
+  
 
     return (
-        <div className="max-w-3xl mx-auto p-8 bg-white rounded-xl shadow-lg my-10 space-y-8">
-
-            <div className="flex flex-col md:flex-row justify-between items-center">
+        <div className="max-w-4xl mx-auto p-6 md:p-10 bg-white rounded-3xl shadow-2xl my-12 space-y-10">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row justify-between md:items-center space-y-6 md:space-y-0">
                 <div>
-                    <h1 className="text-4xl font-semibold text-gray-800">{singleJob?.name}</h1>
-                    <p className="text-xl text-[#9B59B6] font-medium">{singleJob?.title}</p>
-                    <p className="text-sm text-gray-500 mt-1">{postedDate} • {singleJob?.location}</p>
+                    <h1 className="text-4xl font-bold text-gray-900 tracking-tight text-balance">
+                        {singleJob?.name}
+                    </h1>
+                    <p className="text-2xl text-[#9B59B6] font-medium mt-1">{singleJob?.title}</p>
+                    <p className="text-sm text-gray-500 mt-1">
+                        {postedDate} • {singleJob?.location}
+                    </p>
                 </div>
-                <div className="mt-6 md:mt-0">
-                    <Button
-                        className={`px-8 py-3 text-lg ${
-                            isApplied
-                                ? 'bg-gray-600 text-white cursor-not-allowed'
-                                : 'bg-[#A569BD] hover:bg-[#8e44ad] text-white'
-                        }`}
-                        disabled={isApplied}
-                    >
-                        {isApplied ? 'Already Applied' : 'Apply Now'}
-                    </Button>
+                <div>
+                <Button
+onClick={applyJobHandler}
+disabled={isApplied || loading}
+className={`transition-all duration-200 ease-in-out px-8 py-3 text-lg rounded-full shadow-md ${
+    isApplied
+        ? 'bg-gray-400 text-white cursor-not-allowed'
+        : 'bg-[#A569BD] hover:bg-[#8e44ad] text-white'
+}`}
+>
+{loading
+    ? 'Applying...'
+    : isApplied
+    ? 'Login to Apply'
+    : 'Apply Now'}
+</Button>
+
+
                 </div>
             </div>
 
-
-            <div className="flex flex-wrap gap-4 mt-6">
-                <Badge className="bg-gray-100 text-gray-700 font-medium py-2 px-6 border border-gray-300 rounded-lg">
+            {/* Badges */}
+            <div className="flex flex-wrap gap-4">
+                <Badge className="bg-purple-100 text-purple-800 font-medium py-2 px-6 rounded-full shadow-sm">
                     {singleJob?.position} Positions
                 </Badge>
-                <Badge className="bg-gray-100 text-gray-700 font-medium py-2 px-6 border border-gray-300 rounded-lg">
+                <Badge className="bg-green-100 text-green-800 font-medium py-2 px-6 rounded-full shadow-sm">
                     {singleJob?.jobType}
                 </Badge>
-                <Badge className="bg-gray-100 text-gray-700 font-medium py-2 px-6 border border-gray-300 rounded-lg">
+                <Badge className="bg-yellow-100 text-yellow-800 font-medium py-2 px-6 rounded-full shadow-sm">
                     {singleJob?.salary} <span>LPA</span>
                 </Badge>
             </div>
 
-            <div className="mt-8 bg-gray-50 p-6 rounded-lg shadow-sm">
-                <h2 className="text-2xl font-semibold text-gray-700 mb-4">Job Details</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-600">
-                    <div className="flex items-center">
-                        <span className="font-semibold text-gray-800 w-1/3">Location:</span>
-                        <span>{singleJob?.location}</span>
+            {/* Job Details */}
+            <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 shadow-sm">
+                <h2 className="text-2xl font-semibold text-gray-700 mb-6">Job Details</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-600">
+                    <div>
+                        <span className="font-semibold text-gray-800">Location:</span> {singleJob?.location}
                     </div>
-                    <div className="flex items-center">
-                        <span className="font-semibold text-gray-800 w-1/3">Salary:</span>
-                        <span>{singleJob?.salary} LPA</span>
+                    <div>
+                        <span className="font-semibold text-gray-800">Salary:</span> {singleJob?.salary} LPA
                     </div>
-                    <div className="flex items-center">
-                        <span className="font-semibold text-gray-800 w-1/3">Job Type:</span>
-                        <span>{singleJob?.jobType}</span>
+                    <div>
+                        <span className="font-semibold text-gray-800">Job Type:</span> {singleJob?.jobType}
                     </div>
-                    <div className="flex items-center">
-                        <span className="font-semibold text-gray-800 w-1/3">Positions Available:</span>
-                        <span>{singleJob?.position}</span>
+                    <div>
+                        <span className="font-semibold text-gray-800">Positions Available:</span> {singleJob?.position}
                     </div>
-                    <div className="flex items-center">
-                        <span className="font-semibold text-gray-800 w-1/3">Experience:</span>
-                        <span>{singleJob?.experience}Years</span>
+                    <div>
+                        <span className="font-semibold text-gray-800">Experience:</span> {singleJob?.experience} Years
                     </div>
-                    <div className="flex items-center">
-                        <span className="font-semibold text-gray-800 w-1/3">Total Applicants:</span>
-                        <span>{singleJob?.applications?.length}</span>
+                    <div>
+                        <span className="font-semibold text-gray-800">Total Applicants:</span> {singleJob?.applications?.length}
                     </div>
                 </div>
             </div>
 
-            <div className="mt-8">
+            {/* Description */}
+            <div>
                 <h3 className="text-2xl font-semibold text-gray-700 mb-4">Job Description</h3>
-                <p className="text-lg text-gray-600 leading-relaxed">
-                   {singleJob?.description}
+                <p className="text-lg text-gray-700 leading-relaxed text-balance whitespace-pre-line">
+                    {singleJob?.description}
                 </p>
             </div>
         </div>

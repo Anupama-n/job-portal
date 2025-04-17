@@ -27,15 +27,15 @@ const LatestJobCard = ({ job }) => {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <Badge className="text-gray-700 font-medium py-1 px-4 border border-gray-400 bg-white rounded-lg">
-          {job.position} Position{job.position > 1 ? 's' : ''}
-        </Badge>
-        <Badge className="text-gray-700 font-medium py-1 px-4 border border-gray-400 bg-white rounded-lg">
-          {job.jobType}
-        </Badge>
-        <Badge className="text-gray-700 font-medium py-1 px-4 border border-gray-400 bg-white rounded-lg">
-          {job.salary} LPA
-        </Badge>
+        <Badge className="bg-purple-100 text-purple-800 font-medium py-2 px-6 rounded-full shadow-sm">
+                  {job?.position} Positions
+                </Badge>
+                <Badge className="bg-green-100 text-green-800 font-medium py-2 px-6 rounded-full shadow-sm">
+                  {job?.jobType}
+                </Badge>
+                <Badge className="bg-yellow-100 text-yellow-800 font-medium py-2 px-6 rounded-full shadow-sm">
+                  {job?.salary} <span>LPA</span>
+                </Badge>
       </div>
     </div>
   );
