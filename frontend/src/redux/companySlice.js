@@ -9,7 +9,7 @@ const companySlice = createSlice({
     reducers:{
         setSingleCompany:(state,action) =>{
             state.singleCompany = action.payload
-        }
+        },
     }
 })
 export const {setSingleCompany} = companySlice.actions;

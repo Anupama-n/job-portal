@@ -21,7 +21,7 @@ const CompanyCreate = () => {
       toast.error("Please enter a company name.");
       return;
     }
-  
+    
     const loadingToast = toast.loading("Creating company...");
   
     try {
