@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo  } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { useParams } from 'react-router-dom';
@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 
 
 const JobDescription = () => {
-    
+
 
 
     const params = useParams();
@@ -21,8 +21,8 @@ const JobDescription = () => {
     const { singleJob } = useSelector(store => store.job);
     const { user } = useSelector(store => store.auth);
     const isApplied = useMemo(() => {
-      return singleJob?.applications?.some(application => application.applicant === user?._id) || false;
-  }, [singleJob, user?._id]);
+        return singleJob?.applications?.some(application => application.applicant === user?._id) || false;
+    }, [singleJob, user?._id]);
 
 
 
@@ -47,26 +47,26 @@ const JobDescription = () => {
     }, [jobId, dispatch, user?._id]);
 
     const applyJobHandler = async () => {
-      setLoading(true);
-      try {
-          const res = await axios.get(`${APPLICATION_API_END_POINT}/apply/${jobId}`, { withCredentials: true });
-          if (res.data.success) {
-              toast.success(res.data.message);
-  
-              const jobRes = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`, { withCredentials: true });
-              if (jobRes.data.success) {
-                  dispatch(setSingleJob(jobRes.data.job));
-              }
-          }
-      } catch (error) {
-          console.error(error);
-          toast.error(error?.response?.data?.message || "Something went wrong");
-      } finally {
-          setLoading(false);
-      }
-  };
-  
-  
+        setLoading(true);
+        try {
+            const res = await axios.get(`${APPLICATION_API_END_POINT}/apply/${jobId}`, { withCredentials: true });
+            if (res.data.success) {
+                toast.success(res.data.message);
+
+                const jobRes = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`, { withCredentials: true });
+                if (jobRes.data.success) {
+                    dispatch(setSingleJob(jobRes.data.job));
+                }
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error(error?.response?.data?.message || "Something went wrong");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
 
     return (
         <div className="max-w-4xl mx-auto p-6 md:p-10 bg-white rounded-3xl shadow-2xl my-12 space-y-10">
@@ -82,21 +82,20 @@ const JobDescription = () => {
                     </p>
                 </div>
                 <div>
-                <Button
-onClick={applyJobHandler}
-disabled={isApplied || loading}
-className={`transition-all duration-200 ease-in-out px-8 py-3 text-lg rounded-full shadow-md ${
-    isApplied
-        ? 'bg-gray-400 text-white cursor-not-allowed'
-        : 'bg-[#A569BD] hover:bg-[#8e44ad] text-white'
-}`}
->
-{loading
-    ? 'Applying...'
-    : isApplied
-    ? 'Login to Apply'
-    : 'Apply Now'}
-</Button>
+                    <Button
+                        onClick={applyJobHandler}
+                        disabled={isApplied || loading}
+                        className={`transition-all duration-200 ease-in-out px-8 py-3 text-lg rounded-full shadow-md ${isApplied
+                                ? 'bg-gray-400 text-white cursor-not-allowed'
+                                : 'bg-[#A569BD] hover:bg-[#8e44ad] text-white'
+                            }`}
+                    >
+                        {loading
+                            ? 'Applying...'
+                            : isApplied
+                                ? 'Applied Successfully!'
+                                : 'Apply Now'}
+                    </Button>
 
 
                 </div>
