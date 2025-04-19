@@ -10,11 +10,14 @@ export const registerCompany = async (req, res) => {
             });
         let company = await Company.findOne({ name: companyName })
         if (company) {
-            return res.status(400).json({
-                message: "Company already exists",
-                success: false
-            })
-        }
+            return res.status(200).json({
+              message: "Company already exists",
+              company,
+              success: false,
+              exists: true
+            });
+          }
+          
         company = await Company.create({
             name: companyName,
             userId: req.id
