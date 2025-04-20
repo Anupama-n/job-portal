@@ -75,14 +75,6 @@ const AdminJobsTable = () => {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-32 p-3 bg-white border border-gray-200 rounded-lg shadow-lg text-sm">
-
-        <div
-          className="flex items-center gap-2 cursor-pointer hover:text-[#9B59B6] font-semibold transition-colors duration-200"
-          onClick={() => navigate(`/admin/companies/${job._id}`)}
-        >
-          <Edit2 className="w-4 h-4 text-gray-600" /> 
-          <span>Edit</span>
-        </div>
       
         <div onClick={() => navigate(`/admin/jobs/${job._id}/applicants`)} className="flex items-center gap-2 cursor-pointer mt-3 hover:text-[#9B59B6]">
   <Eye className="w-4 h-4 text-gray-600" />

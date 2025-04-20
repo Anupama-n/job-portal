@@ -44,7 +44,6 @@ const Navbar = () => {
     <nav className="bg-white">
       <div className="max-w-7xl mx-auto px-1 sm:px-2 lg:px-4">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
           <h1 className="text-3xl font-bold text-gray-800 -ml-20">
             Job <span className="text-[#9B59B6]">Orbit</span>
           </h1>

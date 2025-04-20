@@ -8,8 +8,11 @@ import { Link } from 'react-router-dom';
 import AppliedJobTable from './AppliedJobTable';
 import UpdateProfileDialog from './UpdateProfileDialog';
 import { useSelector } from 'react-redux';
+import useGetAppliedJobs from '@/hooks/useGetAppliedJobs';
 
 const Profile = () => {
+    useGetAppliedJobs();
+
     const [open, setOpen] = useState(false);
     const { user } = useSelector(store => store.auth);
 
@@ -20,9 +23,9 @@ const Profile = () => {
     return (
         <div className="min-h-screen bg-gray-50">
             <Navbar />
+
             <div className="max-w-4xl mx-auto mt-10 px-4">
                 <div className="relative bg-white border border-gray-200 rounded-2xl shadow-md p-8 flex flex-col space-y-8">
-
                     <Button
                         onClick={() => setOpen(true)}
                         size="icon"
@@ -39,7 +42,6 @@ const Profile = () => {
                                 src={user?.profile?.profilePhoto || "https://static.thenounproject.com/png/363640-200.png"}
                                 alt="User profile"
                             />
-
                         </Avatar>
 
                         <div className="flex flex-col space-y-3">
@@ -95,7 +97,6 @@ const Profile = () => {
                             ) : (
                                 <span>No resume uploaded.</span>
                             )}
-
                         </div>
                     </div>
                 </div>

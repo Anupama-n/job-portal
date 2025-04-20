@@ -15,11 +15,30 @@ import {
 } from '../ui/popover';
 import { MoreHorizontal } from 'lucide-react';
 import { useSelector } from 'react-redux';
+import { APPLICATION_API_END_POINT } from '@/utils/constant';
+import { toast } from 'sonner';
+import axios from 'axios';
 
 const ApplicantsTable = () => {
     const shortlistingStatus = ['Accepted', 'Rejected'];
     const jobData = useSelector((store) => store.application.applicants);
     const applications = jobData?.applications || [];
+
+    const statusHandler = async (status, id) => {
+        try {
+            const res = await axios.post(
+                `${APPLICATION_API_END_POINT}/status/${id}/update`,
+                { status },
+                { withCredentials: true }
+            );
+
+            if (res?.data?.success) {
+                toast.success(res.data.message);
+            }
+        } catch (error) {
+            toast.error(error?.response?.data?.message || 'Unauthorized or server error');
+        }
+    };
 
     return (
         <div className="overflow-x-auto bg-white rounded-xl shadow-md border border-gray-100">
@@ -48,7 +67,7 @@ const ApplicantsTable = () => {
                         applications.map((item) => {
                             const applicant = item?.applicant;
                             const resumeUrl = applicant?.profile?.resume;
-                            const resumeName = applicant?.profile?.resumeOriginalName;
+                            const createdAt = applicant?.createdAt;
 
                             return (
                                 <TableRow key={item._id} className="hover:bg-gray-50">
@@ -70,16 +89,16 @@ const ApplicantsTable = () => {
                                             'N/A'
                                         )}
                                     </TableCell>
+
                                     <TableCell>
-                                        {item?.applicant?.createdAt
-                                            ? new Date(item.applicant.createdAt).toLocaleDateString('en-US', {
-                                                year: 'numeric',
-                                                month: 'short',
-                                                day: 'numeric',
-                                            })
+                                        {createdAt
+                                            ? new Date(createdAt).toLocaleDateString('en-US', {
+                                                  year: 'numeric',
+                                                  month: 'short',
+                                                  day: 'numeric',
+                                              })
                                             : 'N/A'}
                                     </TableCell>
-
 
                                     <TableCell className="text-right">
                                         <Popover>
@@ -92,6 +111,7 @@ const ApplicantsTable = () => {
                                                 {shortlistingStatus.map((status, idx) => (
                                                     <div
                                                         key={idx}
+                                                        onClick={() => statusHandler(status, item?._id)}
                                                         className="text-sm hover:text-[#9B59B6] cursor-pointer transition-colors duration-150 px-2 py-1 rounded-md hover:bg-gray-100"
                                                     >
                                                         {status}
