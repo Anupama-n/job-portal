@@ -1,21 +1,30 @@
-import React, { useEffect,  useState } from "react";
+import React, { useState } from "react";
 import Navbar from "../shared/Navbar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setSearchCompanyByText } from "@/redux/companySlice";
 import AdminJobsTable from "./AdminJobsTable";
 import useGetAllAdminJobs from "@/hooks/useGetAllAdminJobs";
+import { debounce } from "lodash";
 
 const AdminJobs = () => {
   useGetAllAdminJobs();
   const [input, setInput] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  useEffect(()=>{
-    dispatch(setSearchCompanyByText(input));
-  },[input]);
+
+
+  const handleInputChange = debounce((value) => {
+    dispatch(setSearchJobByText(value));  
+  }, 500);  
+
+
+  const onInputChange = (e) => {
+    setInput(e.target.value);
+    handleInputChange(e.target.value);  
+  };
+
   return (
     <div>
       <Navbar />
@@ -24,7 +33,8 @@ const AdminJobs = () => {
           <Input
             className="w-full sm:w-1/2"
             placeholder="Filter by name"
-            onChange= {(e) => setInput(e.target.value)}
+            onChange={onInputChange} 
+            value={input}
           />
           <Button className="bg-[#9B59B6] hover:bg-[#7A3C8E]" onClick={() => navigate("/admin/companies/create")}>
             New Jobs
@@ -32,7 +42,7 @@ const AdminJobs = () => {
         </div>
 
         <div className="mt-8">
-          <AdminJobsTable/>
+          <AdminJobsTable />
         </div>
       </div>
     </div>
