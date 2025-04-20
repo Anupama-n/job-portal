@@ -36,7 +36,7 @@ const Job = ({ job }) => {
       <div className="flex items-center gap-4">
         <Avatar className="w-16 h-16">
           <AvatarImage
-            src={job.company?.logo || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfBHyuf_bJCZp8l1H7u1JJDjkaGnv7_N1IAw&s"}
+            src={job?.company?.logo || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfBHyuf_bJCZp8l1H7u1JJDjkaGnv7_N1IAw&s"}
             alt="Company Logo"
           />
           <AvatarFallback>CL</AvatarFallback>

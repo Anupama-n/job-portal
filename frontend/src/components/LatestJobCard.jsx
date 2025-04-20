@@ -1,6 +1,6 @@
 import React from 'react';
 import { Badge } from './ui/badge';
-import { Link } from 'react-router-dom'; // Import Link for navigation
+import { Link } from 'react-router-dom';
 
 const LatestJobCard = ({ job }) => {
   const postedDate = new Date(job.createdAt).toLocaleDateString('en-US', {

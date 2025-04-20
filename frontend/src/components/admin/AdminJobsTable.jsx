@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table, TableCaption, TableHead, TableHeader, TableRow, TableBody, TableCell } from "@/components/ui/table";
-import { Edit2 } from "lucide-react";
+import { Edit2, Eye, MoreVertical } from "lucide-react";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
@@ -68,21 +68,30 @@ const AdminJobsTable = () => {
                   {new Date(job.createdAt.split("T")[0]).toLocaleDateString()}
                 </TableCell>
                 <TableCell className="py-3 px-4 text-right space-x-2">
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="ghost" size="icon" className="cursor-pointer">
-                        <Edit2 className="w-4 h-4 text-gray-600" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-28 p-2 text-sm">
-                      <div
-                        className="cursor-pointer hover:text-[#9B59B6] font-semibold"
-                        onClick={() => navigate(`/admin/companies/${job._id}`)}
-                      >
-                        Edit
-                      </div>
-                    </PopoverContent>
-                  </Popover>
+                <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="ghost" size="icon" className="cursor-pointer p-1 rounded-full hover:bg-gray-100">
+          <MoreVertical className="w-4 h-4 text-gray-600" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-32 p-3 bg-white border border-gray-200 rounded-lg shadow-lg text-sm">
+
+        <div
+          className="flex items-center gap-2 cursor-pointer hover:text-[#9B59B6] font-semibold transition-colors duration-200"
+          onClick={() => navigate(`/admin/companies/${job._id}`)}
+        >
+          <Edit2 className="w-4 h-4 text-gray-600" /> 
+          <span>Edit</span>
+        </div>
+      
+        <div onClick={() => navigate(`/admin/jobs/${job._id}/applicants`)} className="flex items-center gap-2 cursor-pointer mt-3 hover:text-[#9B59B6]">
+  <Eye className="w-4 h-4 text-gray-600" />
+  <span className="text-gray-600">Applicants</span>
+</div>
+
+      </PopoverContent>
+    </Popover>
+
                 </TableCell>
               </TableRow>
             ))
