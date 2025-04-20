@@ -36,7 +36,7 @@ const AdminJobs = () => {
             onChange={onInputChange} 
             value={input}
           />
-          <Button className="bg-[#9B59B6] hover:bg-[#7A3C8E]" onClick={() => navigate("/admin/companies/create")}>
+          <Button className="bg-[#9B59B6] hover:bg-[#7A3C8E]" onClick={() => navigate("/admin/jobs/create")}>
             New Jobs
           </Button>
         </div>
