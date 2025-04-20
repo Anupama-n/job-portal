@@ -20,7 +20,7 @@ const Signup = () => {
         role: "",
         file: ""
     });
-    const {loading} = useSelector(store=>store.auth);
+    const {loading, user} = useSelector(store=>store.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -67,6 +67,11 @@ const Signup = () => {
             dispatch(setLoading(false));
         }
     };
+     useEffect(()=>{
+            if(user){
+                navigate("/")
+            }
+        })
 
     return (
         <div>
